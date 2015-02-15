@@ -1,4 +1,4 @@
-#include "basic_score.hpp"
+#pragma once
 
 #include <algorithm>
 #include <cassert>
@@ -40,12 +40,12 @@ private:
 
 public:
 
-  template<typename RandomAccessIterator>
-  auto operator()(RandomAccessIterator itx, RandomAccessIterator etx,
-                  RandomAccessIterator ity, RandomAccessIterator ety,
+  template<typename RandomAccessIterator1, typename RandomAccessIterator2>
+  auto operator()(RandomAccessIterator1 itx, RandomAccessIterator1 etx,
+                  RandomAccessIterator2 ity, RandomAccessIterator2 ety,
                   const align_t &GAP_SYMBOL) const
   {
-    auto N = std::distance(itx, etx), M = std::distance(ity, ety);
+    const auto N = std::distance(itx, etx), M = std::distance(ity, ety);
     std::vector<std::vector<slot>> score(N + 1, std::vector<slot>(M + 1));
 
     // Fill top row with GAP multiples
@@ -63,7 +63,7 @@ public:
         auto up   = score[row - 1][col - 0].score() + score_of.del();
         auto left = score[row - 0][col - 1].score() + score_of.ins();
         auto diag = score[row - 1][col - 1].score() + score_of(itx[row - 1], ity[col - 1]);
-        auto max = std::max(up, std::max(left, diag));
+        auto max  = std::max(up, std::max(left, diag));
 
         score[row][col].score() = max;
 
@@ -77,21 +77,26 @@ public:
       }
     }
 
-    std::vector<std::pair<AlignType, AlignType>> result;
+    std::vector<AlignType> Z;
+    std::vector<AlignType> W;
+
     auto row = N, col = M;
     while (row > 0 || col > 0) {
       switch (score[row][col].direction()) {
       case slot::LEFT:
         --col;
-        result.emplace_back(GAP_SYMBOL, ity[col]);
+        Z.emplace_back(GAP_SYMBOL);
+        W.emplace_back(ity[col]);
         break;
       case slot::UP:
         --row;
-        result.emplace_back(itx[row], GAP_SYMBOL);
+        Z.emplace_back(itx[row]);
+        W.emplace_back(GAP_SYMBOL);
         break;
       case slot::UP_LEFT:
         --row, --col;
-        result.emplace_back(itx[row], ity[col]);
+        Z.emplace_back(itx[row]);
+        W.emplace_back(ity[col]);
         break;
       default:
         assert(!"score has undefined direction (should never happen!)");
@@ -99,13 +104,14 @@ public:
       }
     }
 
-    std::reverse(result.begin(), result.end());
+    std::reverse(Z.begin(), Z.end());
+    std::reverse(W.begin(), W.end());
 
-    return std::make_pair(score[N][M].score(), result);
+    return std::make_tuple(score[N][M].score(), Z, W);
   }
 
   template <typename Container>
-  auto operator()(const Container &X, const Container &Y, const AlignType &GAP_SYMBOL) {
+  auto operator()(const Container &X, const Container &Y, const AlignType &GAP_SYMBOL) const {
     return operator()(std::begin(X), std::end(X), std::begin(Y), std::end(Y), GAP_SYMBOL);
   }
 };
