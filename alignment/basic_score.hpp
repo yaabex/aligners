@@ -41,7 +41,7 @@ struct basic_score {
   * \param src The element of the first sequence.
   * \param dst The element of the second sequence.
   */
-  constexpr score_t operator()(const align_t &src, const align_t &dst) const {
+  score_t operator()(const align_t &src, const align_t &dst) const {
     if (matcher_(src, dst)) {
       return match();
     }
@@ -49,16 +49,16 @@ struct basic_score {
   }
 
   /** The score of a match in the sequences. */
-  constexpr score_t match() const { return match_; }
+  score_t match() const { return match_; }
 
   /** The score of a mismatch in the sequences. */
-  constexpr score_t mismatch() const { return mismatch_; }
+  score_t mismatch() const { return mismatch_; }
 
   /** Gives the score of a gap in the first sequence. */
-  constexpr score_t ins() const { return insertion_; }
+  score_t ins() const { return insertion_; }
 
   /** Gives the score of a gap in the second sequence. */
-  constexpr score_t del() const { return deletion_; }
+  score_t del() const { return deletion_; }
 
 private:
   score_t match_;
