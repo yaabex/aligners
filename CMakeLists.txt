@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 2.8.4)
-project(dsa C CXX)
+project(dsa CXX)
 
-add_subdirectory(gtest)
 enable_testing(true)
 
-include_directories(. ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include_directories(. alignment)
 
 # Default build type
 set(CMAKE_BUILD_TYPE Debug)
@@ -20,8 +19,13 @@ set(INCLUDE_FILES
 
 # Testing sources
 set(TEST_FILES
-    tests/needlemanwunsch.cpp)
+    alignment)
 
-add_executable(tests ${INCLUDE_FILES} ${TEST_FILES})
-target_link_libraries(tests gtest gtest_main)
-add_test(tests tests)
+set(TEST_SRC_DIR tests)
+
+foreach (TEST_FILE ${TEST_FILES})
+  add_executable(${TEST_FILE} ${TEST_SRC_DIR}/${TEST_FILE}.cpp ${INCLUDE_FILES})
+  target_link_libraries(${TEST_FILE} gtest gtest_main)
+  add_test(${TEST_FILE} ${TEST_FILE})
+endforeach()
+
