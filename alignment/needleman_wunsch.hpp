@@ -11,8 +11,8 @@ namespace alignment
 template <typename AlignType, typename ScoreSystem>
 struct needleman_wunsch
 {
-  typedef typename ScoreSystem::align_t align_t;
-  typedef typename ScoreSystem::score_t score_t;
+  typedef typename ScoreSystem::align_type align_type;
+  typedef typename ScoreSystem::score_type score_type;
 
 private:
   ScoreSystem score_of;
@@ -25,16 +25,16 @@ private:
     };
 
     slot() : slot(direction_t::UNDEFINED, 0) { }
-    slot(direction_t direction, score_t score) : score_(score), direction_(direction) { }
+    slot(direction_t direction, score_type score) : score_(score), direction_(direction) { }
 
     direction_t &direction() { return direction_; }
     const direction_t &direction() const { return direction_; }
 
-    score_t &score() { return score_; }
-    const score_t &score() const { return score_; }
+    score_type &score() { return score_; }
+    const score_type &score() const { return score_; }
 
   private:
-    score_t score_;
+    score_type score_;
     direction_t direction_;
   };
 
@@ -43,9 +43,10 @@ public:
   template<typename RandomAccessIterator1, typename RandomAccessIterator2>
   auto operator()(RandomAccessIterator1 itx, RandomAccessIterator1 etx,
                   RandomAccessIterator2 ity, RandomAccessIterator2 ety,
-                  const align_t &GAP_SYMBOL) const
+                  const align_type &GAP_SYMBOL) const
   {
-    const auto N = std::distance(itx, etx), M = std::distance(ity, ety);
+    const auto N = std::distance(itx, etx);
+    const auto M = std::distance(ity, ety);
     std::vector<std::vector<slot>> score(N + 1, std::vector<slot>(M + 1));
 
     // Fill top row with GAP multiples
