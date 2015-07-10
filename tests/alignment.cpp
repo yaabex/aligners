@@ -80,6 +80,17 @@ TEST(NeedlemanWunsch, WikipediaExample2) {
   EXPECT_EQ(W, "--TATGC-");
 }
 
+TEST(NeedlemanWunsch, ContainerIndependence) {
+  auto res = nw1(string(""), vector<char>{}, '-');
+  auto score = std::get<0>(res);
+  auto Z = to_string(std::get<1>(res));
+  auto W = to_string(std::get<2>(res));
+
+  ASSERT_EQ(score, 0);
+  ASSERT_EQ(Z, "");
+  ASSERT_EQ(W, "");
+}
+
 TEST(Hirschberg, EmptyLeft) {
   auto res = hb1(string(""), string("ACGT"), '-');
   auto score = std::get<0>(res);
@@ -134,3 +145,15 @@ TEST(Hirschberg, WikipediaExample2) {
   EXPECT_EQ(Z, "AGTACGCA");
   EXPECT_EQ(W, "--TATGC-");
 }
+
+TEST(Hirschberg, ContainerIndependence) {
+  auto res = hb1(string(""), vector<char>{}, '-');
+  auto score = std::get<0>(res);
+  auto Z = to_string(std::get<1>(res));
+  auto W = to_string(std::get<2>(res));
+
+  ASSERT_EQ(score, 0);
+  ASSERT_EQ(Z, "");
+  ASSERT_EQ(W, "");
+}
+

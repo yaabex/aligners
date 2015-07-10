@@ -111,8 +111,8 @@ public:
     return std::make_tuple(score[N][M].score(), Z, W);
   }
 
-  template <typename Container>
-  auto operator()(const Container &X, const Container &Y, const AlignType &GAP_SYMBOL) const {
+  template <typename Container1, typename Container2>
+  auto operator()(const Container1 &X, const Container2 &Y, const AlignType &GAP_SYMBOL) const {
     return operator()(std::begin(X), std::end(X), std::begin(Y), std::end(Y), GAP_SYMBOL);
   }
 };
